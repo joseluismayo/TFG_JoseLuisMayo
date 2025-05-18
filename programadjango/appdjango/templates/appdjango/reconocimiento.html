@@ -1,0 +1,149 @@
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Reconocimiento de Animales</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'styles/main.css' %}">
+        <!-- Cargar Leaflet.js (libreria que carga y ayuda a manejar los mapas en JavaScript) -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+                background-image: url("{% static 'img/bosque1.jpg' %}");
+                background-size: cover;
+                background-position: center;
+                position: relative;
+            }
+            
+            body::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;   
+                background-color: rgba(0, 0, 0, 0.4);
+                z-index: -1;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1 class="titulo">WildDetect</h1>
+            <!-- creamos la interfaz del menú hamburguesa con tres rayas -->
+            <div class="menu-hamburguesa" id="hamburger-menu">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <!-- creamos las distintas opciones de navegacion del menú hamburguesa -->
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="{% url 'inicio' %}">Inicio</a></li>
+                <li><a href="#">Últimos reconocimientos</a></li>
+                <li><a href="{% url 'ajustes' %}">Ajustes</a></li>
+                <li><a href="#" onclick="mostrarMensajeCerrarSesion()"><strong>Cerrar Sesión</strong></a></li>
+            </ul>
+        </header>
+
+        <!-- textfield y boton para filtrar por animales -->
+        <input type="text" id="filtrar" placeholder="Filtrar por animal...">
+        <button id="btn" onclick="filtrarAnimales()">Filtrar</button>
+
+        <!-- mostramos el mapa -->
+        <div id="map"></div>
+
+        <div id="cerrarSesion" class="modal">
+            <div class="modal-content">
+                <p>¿Estás seguro de que quieres cerrar sesión?</p>
+                <button onclick="cerrarSesion()">Sí</button>
+                <button onclick="ocultarMensaje()">No</button>
+            </div>
+        </div>
+
+        <script>
+            let map; //variable que contiene el mapa que se va a mostrar
+            let markers = []; // array que contiene los marcadores de los animales de la base de datos
+
+            function initMap() {
+                // Crear mapa centrado en Madrid
+                map = L.map('map').setView([40.4168, -3.7038], 6);
+
+                // Agregar capa de OpenStreetMap, necesario para poder mostrar correctamente el mapa
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+                
+                //recorremos los animales que se obtienen de la base de datos
+                {% for animal in animales %}
+                    // Usar un nombre único para cada marcador con forloop.counter 
+                    //creamos un marcador con las coordenadas en las que se ha encontrado cada animal
+                    let marker_{{ forloop.counter }} = L.circleMarker([{{ animal.lugarEncuentro.latitud }}, {{ animal.lugarEncuentro.longitud }}], {
+                        color: 'green',  // El color del borde
+                        fillColor: 'green',  // El color de fondo del círculo
+                        fillOpacity: 0.5,  // Opacidad del relleno
+                        radius: 10  // El radio del círculo
+                    })
+                        .addTo(map)
+                        //añadimos una ventana emergente cuando el raton se posa encima de la ubicacion mostrando esta informacion
+                        .bindPopup('<h3>{{ animal.nombreAnimal }}</h3><p>Fecha y hora: {{ animal.fechaHora }}</p>');
+                    
+                    // Añadir el marcador al array de marcadores
+                    markers.push({
+                        nombre: '{{ animal.nombreAnimal }}',
+                        marker: marker_{{ forloop.counter }} // Usar el nombre único
+                    });
+                {% endfor %}
+            }
+            //funcion usada cuando pulsamos el boton de filtrar animales
+            function filtrarAnimales() {
+                // Obtenemos el valor del filtro que ha introducido el usuario
+                const animalFiltro = document.getElementById("filtrar").value.toLowerCase();
+
+                // Recorremos los marcadores y mostrar solo los que coincidan con el filtro
+                markers.forEach(function(animal) {
+                    //cogemos el nombre del animal de cada uno de los marcadores (en minuscula)
+                    const nombreAnimal = animal.nombre.toLowerCase();
+                    
+                    // Mostramos el marcador si el nombre del animal incluye el filtro
+                    if (nombreAnimal.includes(animalFiltro)) {
+                        animal.marker.addTo(map);
+                    } else {
+                        map.removeLayer(animal.marker); // Eliminar el marcador si no coincide
+                    }
+                });
+            }
+            //hacemos que se ejecute la funcion de initMap (mapa con todos los marcadores), cuando se cargue la página por completo
+            //DOMContentLoaded se asegura de que se cargue el codigo JavaScript cuando el HTML haya cargado correctamente
+            document.addEventListener('DOMContentLoaded', initMap);
+        </script>
+
+        <script>
+            // codigo para mostrar el alert de Cerrar Sesión
+            function mostrarMensajeCerrarSesion() {
+                document.getElementById("cerrarSesion").style.display = "flex";  // Mostrar el modal con 'flex'
+            }
+            // codigo para que hacer si pulsa el boton "Si"
+            function cerrarSesion() {
+                window.location.href = "/"; // Redirige al login
+            }
+            // codigo para que hacer si pulsa el boton "No"
+            function ocultarMensaje() {
+                document.getElementById("cerrarSesion").style.display = "none";
+            }
+            //funcion que ejecuta el uso del menú hamburguesa
+            document.getElementById("hamburger-menu").addEventListener("click", function() {
+                const navMenu = document.getElementById("nav-menu");
+                navMenu.classList.toggle("active");
+            });
+
+            //codigo que nos asegura que el mensaje de cerrar sesion esta oculto a la hora de cargar la pagina
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById("cerrarSesion").style.display = "none";
+            });
+        </script>
+    </body>
+    </html>

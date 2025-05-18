@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reconocimiento de Animales</title>
+    {% load static %}   
+    <style>
+        .menu-hamburguesa {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            width: 25px;
+            height: 25px;
+            justify-content: space-around;
+            align-items: center;
+            position: absolute; /* Cambié a 'absolute' para que se quede dentro del header */
+            top: 20px; /* Ajusta la posición desde la parte superior del header */
+            left: 20px; /* Ajusta la posición desde la izquierda del header */
+            z-index: 1000; /* Asegura que el menú esté por encima de otros elementos */
+        }
+        
+        .menu-hamburguesa div {
+            background-color:rgb(255, 255, 255);
+            height: 4px;
+            width: 30px;
+            border-radius: 5px;
+        }
+
+        .nav-menu {
+            display: none;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            position: absolute;
+            top: 70px; /* Ajusta la distancia desde la parte superior */
+            left: 20px; /* Coloca el menú a la izquierda con un margen de 20px */
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            border: 2px solid black;
+        }
+        .nav-menu a {
+            color: black;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .nav-menu li {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid black;
+        }
+
+        .nav-menu li:hover {
+            background-color:rgb(174, 255, 177);
+        }
+
+        /* Estilos cuando el menú hamburguesa está activo */
+        .nav-menu.active {
+            display: block;
+        }
+
+        html, body {
+            height: 100%; /* Establecer altura al 100% */
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-image: url("{% static 'img/bosque1.jpg' %}"); 
+            background-size: cover; /* Asegura que la imagen cubra toda la pantalla */
+            background-position: center; /* Centra la imagen */
+            position: relative;
+        }
+
+        /* Capa de oscurecimiento sobre la imagen de fondo */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4); /* Fondo oscuro con transparencia */
+            z-index: -1; /* Asegura que la capa esté detrás del contenido */
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .container {
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn:hover {
+            background-color: rgb(139, 212, 141); /* Cambia el color de fondo */
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border: 2px solid black;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px; /* Ancho fijo */
+            position: absolute; /* Asegura que no se mueva al abrir/cerrar */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Mantiene el cuadro en el centro */
+        }
+
+        .modal_ubicacion {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button {
+            background-color: #4CAF50;
+            border: none;
+            padding: 10px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: rgb(9, 136, 13);
+        }
+
+        button {
+            background-color:  #4CAF50;
+            border: none;
+            padding: 10px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 15px
+        }
+
+        button:hover {
+            background-color:rgb(9, 136, 13);
+        }
+
+        #video {
+            width: 100%;
+            max-width: 400px;
+            margin-top: 20px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        #cerrarSesion {
+            display: none;
+        }
+
+        /* Media queries para hacer el diseño responsive */
+        @media (max-width: 600px) {
+            header {
+                font-size: 18px;
+                padding: 15px;
+            }
+
+            .container {
+                margin: 20px;
+                padding: 15px;
+                max-width: 90%; /* Asegura que el contenedor ocupe un mayor porcentaje en pantallas pequeñas */
+            }
+
+            .btn {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+
+            #video {
+                max-width: 90%; /* Asegura que el video no se desborde en pantallas pequeñas */
+            }
+
+            .menu-hamburguesa {
+                top: 15px;
+                left: 15px;
+                width: 30px; /* Aumenta el tamaño del menú hamburguesa en pantallas pequeñas */
+                height: 30px;
+            }
+
+            .menu-hamburguesa div {
+                width: 35px; /* Aumenta el tamaño de las líneas del menú */
+            }
+
+            .nav-menu {
+                top: 60px; /* Ajusta la posición para que quede justo debajo del menú hamburguesa */
+                left: 10px;
+                right: 10px; /* Añade un margen de derecha */
+                width: calc(100% - 20px); /* Asegura que el menú se ajuste a todo el ancho */
+            }
+
+            .nav-menu li {
+                font-size: 12px; /* Reduce el tamaño de la fuente de los ítems */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        WildDetect
+    </header>
+    
+    <div class="container">
+        <h2>Resultado del reconocimiento</h2>
+        {% if probabilidad >= 60 %}
+            <p>El modelo ha detectado un <b>{{clase}}</b> con una probabilidad de <b>{{probabilidad}}%</b></p>
+
+            <a href="{% url 'inicio' %}" class="btn">Volver a reconocer</a>
+
+            <form id="guardarAnimalForm" method="POST" action="{% url 'guardar_animal' %}" onsubmit="return validarUbicacion()">
+                {% csrf_token %}
+                <input type="hidden" name="clase" value="{{ clase }}">
+                <input type="hidden" name="probabilidad" value="{{ probabilidad }}">
+                <input type="hidden" name="latitud" id="latitud">
+                <input type="hidden" name="longitud" id="longitud">
+                <button type="submit" class="btn">Guardar animal</button>
+            </form>
+        {% else %}
+            <p>El modelo no ha podido reconocer con seguridad el animal de la imagen</p>
+            <a href="{% url 'inicio' %}" class="btn">Volver a reconocer</a>
+        {% endif %}
+    </div>
+
+    <!-- Modal de error -->
+    <div id="modalUbicacion" class="modal_ubicacion">
+        <div class="modal-content">
+            <h2>Ingresar Ubicación. Si pulsas "Cerrar" se guardará una ubicacion predeterminada de la comunidad.</h2>
+            
+            <!-- Formulario para latitud y longitud -->
+            <form id="ubicacionForm" onsubmit="return false;"> <!-- Prevenimos el envío por defecto -->
+                <label for="latitud">Latitud:</label>
+                <input type="text" id="latitud_modal" name="latitud_modal" placeholder="Ingresar latitud" required/><br><br>
+                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                <label for="longitud">Longitud:</label>
+                <input type="text" id="longitud_modal" name="longitud_modal" placeholder="Ingresar longitud" required/><br><br>
+            
+                <!-- Botones -->
+                <button type="button" onclick="cerrarModal()">Cerrar</button>
+                <button type="button" onclick="guardarUbicacionManual()">Guardar Ubicación</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById('modalUbicacion').style.display = 'none';
+        });
+
+        // Función de validación
+        function validarUbicacion() {
+            const latitud = document.getElementById('latitud').value;
+            const longitud = document.getElementById('longitud').value;
+
+            // Si latitud o longitud son nulos, mostramos el modal y evitamos el envío del formulario
+            if (!latitud || !longitud) {
+                document.getElementById('modalUbicacion').style.display = 'flex'; // Mostrar modal
+                return false; // Evitar el envío del formulario
+            }
+            return true; // Permitir el envío del formulario
+        }
+
+        function guardarUbicacionManual() {
+            const latitud = parseFloat(document.getElementById('latitud_modal').value);
+            const longitud = parseFloat(document.getElementById('longitud_modal').value);
+
+            // Validar que sean números válidos y estén en rango
+            if (isNaN(latitud) || latitud < -90 || latitud > 90) {
+                alert("La latitud debe estar entre -90 y 90.");
+                return;
+            }
+
+            if (isNaN(longitud) || longitud < -180 || longitud > 180) {
+                alert("La longitud debe estar entre -180 y 180.");
+                return;
+            }
+
+            // Si todo está correcto, asignamos los valores y cerramos el modal
+            document.getElementById('latitud').value = latitud;
+            document.getElementById('longitud').value = longitud;
+
+            document.getElementById('modalUbicacion').style.display = 'none';
+
+            document.getElementById('guardarAnimalForm').submit();
+        }
+
+
+        
+        function cerrarModal() {
+            const latitud = 40.6570;
+            const longitud = -4.7000;
+
+            document.getElementById('latitud').value = latitud;
+            document.getElementById('longitud').value = longitud;
+
+            document.getElementById('modalUbicacion').style.display = 'none';
+
+            document.getElementById('guardarAnimalForm').submit();
+        }
+
+    </script>   
+</body>
+</html>

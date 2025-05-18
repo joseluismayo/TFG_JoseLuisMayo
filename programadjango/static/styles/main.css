@@ -1,0 +1,266 @@
+.menu-hamburguesa {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    justify-content: space-around;
+    align-items: center;
+    position: absolute; /* Cambié a 'absolute' para que se quede dentro del header */
+    top: 20px; /* Ajusta la posición desde la parte superior del header */
+    left: 20px; /* Ajusta la posición desde la izquierda del header */
+}
+
+.menu-hamburguesa div {
+    background-color:rgb(255, 255, 255);
+    height: 4px;
+    width: 30px;
+    border-radius: 5px;
+}
+
+.titulo {
+    font-size: 24px;
+}
+
+/* Estilo para el menú de navegación */
+.nav-menu {
+    display: none;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: 70px; /* Ajusta la distancia desde la parte superior */
+    left: 20px; /* Coloca el menú a la izquierda con un margen de 20px */
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+    border: 2px solid black;
+    z-index: 10000000; /* Asegura que el menú esté por encima de otros elementos */
+    width: 150px;
+}
+/* color de la letra en negro y sin subrayado */
+.nav-menu a {
+    color: black;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.nav-menu li {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid black;
+}
+
+.nav-menu li:hover {
+    background-color:rgb(174, 255, 177);
+}
+
+/* Estilos cuando el menú hamburguesa está activo */
+.nav-menu.active {
+    display: block;
+}
+
+/* Estilos generales para el cuerpo */
+html, body {
+    height: 100%; /* Establecer altura al 100% */
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilo del header */
+header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 1px;
+    font-size: 24px;
+}
+
+
+/* Estilo del contenedor */
+.container {
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para los botones */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+}
+
+.btn:hover {
+    background-color: rgb(139, 212, 141); /* Cambia el color de fondo */
+}
+
+/* Estilo del modal de confirmación de cierre de sesión */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border: 2px solid black;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 300px; /* Ancho fijo */
+    position: absolute; /* Asegura que no se mueva al abrir/cerrar */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Mantiene el cuadro en el centro */
+}
+
+button {
+    background-color:  #4CAF50;
+    border: none;
+    padding: 10px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-bottom: 15px
+}
+
+button:hover {
+    background-color:rgb(9, 136, 13);
+}
+
+/* Estilo para el video de la cámara */
+#video {
+    width: 100%;
+    max-width: 400px;  /* Limita el ancho máximo del video */
+    margin-top: 20px;  /* Separación superior */
+    margin-left: auto; /* Alineación automática hacia la izquierda */
+    margin-right: auto; /* Alineación automática hacia la derecha */
+    display: block; /* Asegúrate de que se muestre el video */
+    object-fit: cover; /* Asegura que el contenido se ajuste bien dentro del recuadro */
+}
+
+#filtrar {
+    padding: 10px;
+    width: 60%;
+    max-width: 300px;
+    margin: 20px auto;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    display: block;
+}
+
+.animal {
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#map {
+    height: 60vh;
+    width: 80%; /* más estrecho que antes */
+    margin: 3% auto 20%; /* margen inferior añadido (5%) */
+    z-index: 10;
+    position: relative;
+}
+
+.modal {
+    display: none;  /* Ocultos por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border: 2px solid black;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 80%;
+    max-width: 300px;
+    z-index: 1000;
+}
+
+#btn {
+    background-color: #4CAF50;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#btn:hover {
+    background-color: rgb(22, 112, 25);
+}
+
+@media screen and (max-width: 768px) {
+    #map {
+        height: 50vh;
+        width: 95%;
+    }
+
+    #filtrar {
+        width: 80%;
+    }
+
+    header {
+        font-size: 18px;
+        padding: 15px;
+    }
+
+    .modal-content {
+        width: 90%;
+    }
+
+    .nav-menu {
+        width: 70%;
+    }
+
+    .menu-hamburguesa {
+        top: 15px;
+        left: 15px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #map {
+        height: 45vh;
+    }
+
+    #btn {
+        width: 80%;
+        margin: 10px auto;
+    }
+
+    .titulo {
+        margin-top: 3px; /* Ajusta este valor según lo que necesites */
+        margin-left: 25px;
+        font-size: 16px;
+    }
+}
